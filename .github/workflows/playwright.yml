@@ -11,17 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
+        
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        # Eğer requirements.txt varsa ondan yükle, yoksa elle yükle
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        # Garanti olsun diye playwright'ı tekrar tetikle
         pip install pytest-playwright pytest-html
         playwright install --with-deps
+
     - name: Run Tests
       run: python -m pytest --html=report.html
+
     - name: Upload Report
       uses: actions/upload-artifact@v3
       if: always()
